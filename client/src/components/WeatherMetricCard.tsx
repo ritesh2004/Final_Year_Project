@@ -1,5 +1,5 @@
 import { Card } from "./ui/card";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface WeatherMetricCardProps {
   icon: ReactNode;
