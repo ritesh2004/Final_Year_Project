@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1765047770723,
+      "tag": "0000_serious_typhoid_mary",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1765047917705,
+      "tag": "0001_oval_boom_boom",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1765050222513,
+      "tag": "0002_plain_red_skull",
+      "breakpoints": true
+    }
+  ]
+}
