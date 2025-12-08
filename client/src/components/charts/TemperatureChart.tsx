@@ -1,24 +1,29 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
-
-// Generate mock data for last 24 hours
-const generateData = () => {
-  const data = [];
-  for (let i = 0; i < 24; i++) {
-    data.push({
-      time: `${i}:00`,
-      temperature: 20 + Math.sin(i / 3) * 5 + Math.random() * 2,
-      feels_like: 19 + Math.sin(i / 3) * 5 + Math.random() * 2
-    });
-  }
-  return data;
-};
+import { type SensorData, useSocketData } from "../../hooks/useSocketData";
+import { useMemo } from "react";
 
 interface TemperatureChartProps {
   detailed?: boolean;
 }
 
 export function TemperatureChart({ detailed = false }: TemperatureChartProps) {
-  const data = generateData();
+  const { historicalData } = useSocketData();
+
+  // Transform historical data for chart
+  const data = useMemo(() => {
+    return historicalData.map((item: SensorData, index: number) => {
+      const date = new Date(item.timestamp);
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      
+      return {
+        time: `${hours}:${minutes.toString().padStart(2, '0')}`,
+        temperature: parseFloat(item.temperature.toFixed(2)),
+        feels_like: parseFloat((item.temperature - 1).toFixed(2)), // Simplified estimation
+        timestamp: item.timestamp
+      };
+    });
+  }, [historicalData]);
 
   if (detailed) {
     return (

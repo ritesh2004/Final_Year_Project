@@ -1,16 +1,22 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-
-const data = [
-  { day: "Mon", rainfall: 2.3 },
-  { day: "Tue", rainfall: 0.5 },
-  { day: "Wed", rainfall: 5.2 },
-  { day: "Thu", rainfall: 1.8 },
-  { day: "Fri", rainfall: 0.2 },
-  { day: "Sat", rainfall: 3.6 },
-  { day: "Sun", rainfall: 2.1 }
-];
+import { type SensorData, useSocketData } from "../../hooks/useSocketData";
+import { useMemo } from "react";
 
 export function RainfallChart() {
+  const { historicalData } = useSocketData();
+
+  const data = useMemo(() => {
+    return historicalData.map((item: SensorData) => {
+      const date = new Date(item.timestamp);
+      const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
+      
+      return {
+        day: dayOfWeek,
+        rainfall: 0 // Rainfall data not in sensor schema, keeping placeholder
+      };
+    });
+  }, [historicalData]);
+
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data}>

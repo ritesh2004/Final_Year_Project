@@ -1,32 +1,18 @@
 import { WeatherMetricCard } from "./WeatherMetricCard";
 import { Thermometer, Droplets, Sun, Gauge, Wind, CloudRain } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useSocketData } from "../hooks/useSocketData";
 
 export function WeatherOverview() {
-  const [weatherData, setWeatherData] = useState({
-    temperature: 24.5,
-    humidity: 65,
-    solarRadiation: 850,
-    pressure: 1013.25,
-    windSpeed: 12.5,
-    rainfall: 2.3
-  });
+  const { currentData } = useSocketData();
 
-  // Simulate real-time updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setWeatherData(prev => ({
-        temperature: +(prev.temperature + (Math.random() - 0.5) * 0.5).toFixed(1),
-        humidity: Math.max(0, Math.min(100, +(prev.humidity + (Math.random() - 0.5) * 2).toFixed(0))),
-        solarRadiation: Math.max(0, +(prev.solarRadiation + (Math.random() - 0.5) * 50).toFixed(0)),
-        pressure: +(prev.pressure + (Math.random() - 0.5) * 0.5).toFixed(2),
-        windSpeed: Math.max(0, +(prev.windSpeed + (Math.random() - 0.5) * 1).toFixed(1)),
-        rainfall: Math.max(0, +(prev.rainfall + (Math.random() - 0.5) * 0.2).toFixed(1))
-      }));
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const weatherData = {
+    temperature: currentData?.temperature ?? 0,
+    humidity: currentData?.humidity ?? 0,
+    solarRadiation: currentData?.radiation ?? 0,
+    pressure: currentData?.atmosphericPressure ?? 0,
+    windSpeed: currentData?.windspeed ?? 0,
+    rainfall: 0 // Not available in current sensor schema
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">

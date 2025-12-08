@@ -2,10 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
-import db from './db/index';
 import client from './utils/mqtt-server';
 import { sensorDataTable } from './db/schema';
 import { storeSensorData } from './utils/store-data';
+import { SocketServer } from './socket/socketServer';
+import { createServer } from 'http';
 
 dotenv.config();
 
@@ -15,6 +16,12 @@ const PORT = parseInt(process.env.PORT || '3000');
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
+
+// Create HTTP server
+const httpServer = createServer(app);
+// Initialize Socket Server
+const socketServer = new SocketServer(httpServer);
+const io = socketServer.getIoInstance();
 
 // Initialize MQTT client
 client.on('connect', () => {
@@ -30,6 +37,9 @@ client.on('message', async (topic, message) => {
     // Here you can parse the message and store it in the database using `db`
     // Example: await db.insert(sensorDataTable).values({ ...parsedData });
     await storeSensorData({ topic, message: message.toString() });
+
+    // Optionally, emit the new data to connected Socket.io clients
+    io.emit('new-sensor-data', { topic, message: message.toString() });
 });
 
 // Subscribe to some sensor data topics
@@ -37,6 +47,6 @@ client.subscribe('sensor/data');
 
 // Start the server
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
