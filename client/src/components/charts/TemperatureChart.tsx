@@ -11,7 +11,7 @@ export function TemperatureChart({ detailed = false }: TemperatureChartProps) {
 
   // Transform historical data for chart
   const data = useMemo(() => {
-    return historicalData.map((item: SensorData, index: number) => {
+    return historicalData.map((item: SensorData) => {
       const date = new Date(item.timestamp);
       const hours = date.getHours();
       const minutes = date.getMinutes();
