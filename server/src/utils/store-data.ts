@@ -35,5 +35,5 @@ export async function storeSensorData({
 
 // Helper function to validate numbers (exclude NaN, Infinity, etc.)
 function isValidNumber(value: any): boolean {
-    return typeof value === 'number' && isFinite(value);
+    return typeof value === 'number' || typeof value === 'string' && isFinite(Number(value));
 }

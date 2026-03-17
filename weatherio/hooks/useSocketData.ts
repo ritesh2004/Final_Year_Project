@@ -19,7 +19,16 @@ interface UseSocketDataReturn {
   isLoading: boolean;
 }
 
-export const useSocketData = (serverUrl: string = 'https://finalyr.ritesh-pramanik.me'): UseSocketDataReturn => {
+/**
+ * Hook to connect to the weather sensor server via WebSocket (socket.io).
+ * Adapted from client/src/hooks/useSocketData.ts for React Native.
+ *
+ * @param serverUrl - WebSocket server URL (default: http://localhost:8080).
+ *   On a physical device, use your machine's LAN IP instead.
+ */
+export const useSocketData = (
+  serverUrl: string = 'https://finalyr.ritesh-pramanik.me',
+): UseSocketDataReturn => {
   const socketRef = useRef<Socket | null>(null);
   const [currentData, setCurrentData] = useState<Partial<SensorData> | null>(null);
   const [historicalData, setHistoricalData] = useState<SensorData[]>([]);
@@ -32,7 +41,7 @@ export const useSocketData = (serverUrl: string = 'https://finalyr.ritesh-praman
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5
+      reconnectionAttempts: 5,
     });
 
     const socket = socketRef.current;
@@ -52,10 +61,10 @@ export const useSocketData = (serverUrl: string = 'https://finalyr.ritesh-praman
 
     // Receive historical data
     socket.on('sensorData', (data: SensorData[]) => {
-      console.log('Received historical data:', data);
+      console.log('Received historical data:', data.length, 'records');
       // Sort by timestamp ascending (oldest first)
       const sortedData = [...data].sort(
-        (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
       );
       setHistoricalData(sortedData);
       setIsLoading(false);
@@ -67,33 +76,33 @@ export const useSocketData = (serverUrl: string = 'https://finalyr.ritesh-praman
 
       try {
         // Parse the message if it's a JSON string
-        const parsedData = typeof data.message === 'string'
-          ? JSON.parse(data.message)
-          : data.message;
+        const parsedData =
+          typeof data.message === 'string' ? JSON.parse(data.message) : data.message;
 
         const newSensorData: SensorData = {
-          id: Math.max(...historicalData.map(d => d.id), 0) + 1,
+          id: Date.now(),
           temperature: parseFloat(parsedData.temperature) || 0,
           humidity: parseFloat(parsedData.humidity) || 0,
           windspeed: parseFloat(parsedData.windspeed) || 0,
           atmosphericPressure: parseFloat(parsedData.atmosphericPressure) || 0,
           radiation: parseFloat(parsedData.radiation) || 0,
           rainfall: parseFloat(parsedData.rainfall) || 0,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         // Update current data
         setCurrentData(newSensorData);
 
         // Add to historical data array
-        setHistoricalData(prev => [...prev, newSensorData]);
+        setHistoricalData((prev) => [...prev, newSensorData]);
       } catch (error) {
-        console.error('Error parsing sensor data:', error);
+        console.log('Error parsing sensor data:', error);
       }
     });
 
     socket.on('connect_error', (error) => {
-      console.error('Connection error:', error);
+      console.log('Connection error:', error);
+      setIsLoading(false);
     });
 
     return () => {
@@ -107,6 +116,6 @@ export const useSocketData = (serverUrl: string = 'https://finalyr.ritesh-praman
     currentData,
     historicalData,
     isConnected,
-    isLoading
+    isLoading,
   };
 };

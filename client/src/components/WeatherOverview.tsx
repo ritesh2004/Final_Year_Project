@@ -11,7 +11,7 @@ export function WeatherOverview() {
     solarRadiation: currentData?.radiation ?? 0,
     pressure: currentData?.atmosphericPressure ?? 0,
     windSpeed: currentData?.windspeed ?? 0,
-    rainfall: 0 // Not available in current sensor schema
+    rainfall: currentData?.rainfall ?? 0
   };
 
   return (
@@ -34,7 +34,7 @@ export function WeatherOverview() {
         icon={<Sun className="size-6" />}
         title="Solar Radiation"
         value={weatherData.solarRadiation}
-        unit="W/m²"
+        unit="Lux"
         color="bg-gradient-to-br from-yellow-500 to-orange-500"
       />
       <WeatherMetricCard
