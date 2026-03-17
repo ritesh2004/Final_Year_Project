@@ -1,12 +1,6 @@
-#include <Wire.h>
 #include <SPI.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SH110X.h>
 
-#define I2C_ADD 0x3C
 #define HALL_PIN 2   // interrupt pin (D2)
-
-Adafruit_SH1106G display(128,64,&Wire,-1);
 
 const float mmHeight = 0.173;
 
@@ -14,7 +8,8 @@ volatile int tipCount = 0;
 float rain = 0;
 
 unsigned long lastInterrupt = 0;
-byte command = 0;
+volatile byte command = 0;
+volatile boolean dataReady = false;
 
 // -------- RAIN INTERRUPT --------
 void bucketTipped() {
@@ -32,15 +27,10 @@ ISR (SPI_STC_vect) {
 
   command = SPDR;   // receive command from ESP32
 
-  if(command == 0x02) {
-
-    byte rainByte = (byte)tipCount; // send rain tips
-    SPDR = rainByte;
-
-  } else {
-
-    SPDR = 0;
-  }
+  byte rainByte = (byte)tipCount; // send rain tips
+  SPDR = rainByte;
+  dataReady = true;
+  
 }
 
 void setup() {
@@ -52,16 +42,25 @@ void setup() {
 
   // ---- SPI SLAVE SETUP ----
   pinMode(MISO, OUTPUT);
+  pinMode(SS, INPUT);
+
   SPCR |= _BV(SPE);      // enable SPI
-  SPI.attachInterrupt();
+  SPCR |= _BV(SPIE);            // Enable SPI Interrupt
 
-  display.begin(I2C_ADD, true);
-  display.clearDisplay();
-
+  SPDR = 15;
   Serial.println("Rain Gauge SPI Slave Ready");
 }
 
 void loop() {
+
+  // Debugging: Print data only when a full SPI transaction completed
+  if (dataReady) {
+    Serial.print("Slave received command: ");
+    Serial.print(command);
+    Serial.print(" | Sent tip count: ");
+    Serial.println((byte)tipCount); // Print the byte value sent
+    dataReady = false;
+  }
 
   rain = tipCount * mmHeight;
 
@@ -70,17 +69,6 @@ void loop() {
   Serial.print("  Rain: ");
   Serial.print(rain);
   Serial.println(" mm");
-
-  display.clearDisplay();
-  display.setCursor(0,0);
-  display.setTextSize(1);
-  display.setTextColor(SH110X_WHITE);
-
-  display.print("Rain: ");
-  display.print(rain);
-  display.println(" mm");
-
-  display.display();
 
   delay(500);
 }
