@@ -18,7 +18,7 @@
 #define DHTPIN 4
 #define DHTTYPE DHT11
 
-#define LDR_PIN 15
+#define LDR_PIN 34
 
 DHT dht(DHTPIN, DHTTYPE);
 Adafruit_BMP280 bmp;
@@ -31,6 +31,8 @@ Adafruit_BMP280 bmp;
 #define MOSI_PIN 23
 #define SS_PIN 5
 
+SPIClass spi = SPIClass(VSPI);
+
 SPISettings settings(1000000, MSBFIRST, SPI_MODE0);
 
 // OLED
@@ -39,6 +41,11 @@ Adafruit_SH1106G display(128,64,&Wire,-1);
 // WiFi
 const char* ssid = "Motorolag54";
 const char* password = "24246262";
+
+// const char* ssid = "Ritesh";
+// const char* password = "ritesh2004";
+
+int ldrValue = 0;
 
 // MQTT
 #define MQTT_BROKER "d85b561d6bee461aa99610ea09619324.s1.eu.hivemq.cloud"
@@ -89,9 +96,11 @@ void setup() {
 
   Serial.begin(115200);
 
+  pinMode(LDR_PIN, INPUT);
+
   dht.begin();
 
-  SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
+  spi.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
 
   pinMode(SS_PIN, OUTPUT);
   digitalWrite(SS_PIN, HIGH);
@@ -127,37 +136,38 @@ void loop() {
   float pressure = bmp.readPressure()/100.0;
 
   // LDR
-  int ldrValue = analogRead(LDR_PIN);
+  ldrValue = analogRead(LDR_PIN);
+  // Serial.printf("LDR: %d", ldrValue);
   float radiation = 500.0 / pow((ldrValue / 1000.0), 1.4);
 
   // -------- WIND SPEED --------
-  byte command = 0x01;
-  byte received;
+  // byte command = 0x01;
+  // byte received;
 
-  SPI.beginTransaction(settings);
+  // SPI.beginTransaction(settings);
 
-  digitalWrite(SS_PIN, LOW);
-  received = SPI.transfer(command);
-  digitalWrite(SS_PIN, HIGH);
+  // digitalWrite(SS_PIN, LOW);
+  // received = SPI.transfer(command);
+  // digitalWrite(SS_PIN, HIGH);
 
-  SPI.endTransaction();
+  // SPI.endTransaction();
 
-  float windSpeed = (float)received;
+  // float windSpeed = (float)received;
 
   // -------- RAIN GAUGE --------
-  command = 0x02;
+  byte command = 0x02;
+  byte received;
 
-  SPI.beginTransaction(settings);
+  spi.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
 
   digitalWrite(SS_PIN, LOW);
-  received = SPI.transfer(command);
+  received = spi.transfer(command);
   digitalWrite(SS_PIN, HIGH);
 
-  SPI.endTransaction();
+  spi.endTransaction();
 
-  int tips = received;
+  int tips = (int) received;
   float rainfall = tips * rainMM;
-  Serial.println(tips);
 
   // -------- SERIAL OUTPUT --------
   Serial.println("----- Weather Data -----");
@@ -171,8 +181,8 @@ void loop() {
   Serial.print("Pressure: ");
   Serial.println(pressure);
 
-  Serial.print("Wind Speed: ");
-  Serial.println(windSpeed);
+  // Serial.print("Wind Speed: ");
+  // Serial.println(windSpeed);
 
   Serial.print("Rainfall: ");
   Serial.println(rainfall);
@@ -192,7 +202,7 @@ void loop() {
   "\"temperature\":" + String(temp) +
   ",\"humidity\":" + String(humidity) +
   ",\"atmosphericPressure\":" + String(pressure) +
-  ",\"windspeed\":" + String(windSpeed) +
+  // ",\"windspeed\":" + String(windSpeed) +
   ",\"rainfall\":" + String(rainfall) +
   ",\"radiation\":" + String(radiation) +
   "}";
@@ -205,21 +215,29 @@ void loop() {
   display.setCursor(0,0);
 
   display.print("Temp: ");
-  display.println(temp);
+  display.print(temp);
+  display.println(" C");
 
   display.print("Hum: ");
-  display.println(humidity);
+  display.print(humidity);
+  display.println(" %");
 
-  display.print("Wind: ");
-  display.println(windSpeed);
+  // display.print("Wind: ");
+  // display.println(windSpeed);
 
   display.print("Rain: ");
-  display.println(rainfall);
+  display.print(rainfall);
+  display.println(" mm");
+
+  display.print("Radiation: ");
+  display.print(radiation);
+  display.println(" lum");
 
   display.print("Atm: ");
-  display.println(pressure);
+  display.print(pressure);
+  display.println(" hPa");
 
   display.display();
 
-  delay(1000);
+  delay(2000);
 }
