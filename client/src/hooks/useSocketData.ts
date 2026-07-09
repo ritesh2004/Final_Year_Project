@@ -19,7 +19,7 @@ interface UseSocketDataReturn {
   isLoading: boolean;
 }
 
-export const useSocketData = (serverUrl: string = 'https://finalyr.ritesh-pramanik.me'): UseSocketDataReturn => {
+export const useSocketData = (serverUrl: string = 'https://ec2-65-0-32-80.ap-south-1.compute.amazonaws.com'): UseSocketDataReturn => {
   const socketRef = useRef<Socket | null>(null);
   const [currentData, setCurrentData] = useState<Partial<SensorData> | null>(null);
   const [historicalData, setHistoricalData] = useState<SensorData[]>([]);

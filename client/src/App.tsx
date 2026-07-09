@@ -1,5 +1,6 @@
 import { WeatherOverview } from "./components/WeatherOverview";
 import { StatsSection } from "./components/StatsSection";
+import { MLPredictionsSection } from "./components/MLPredictionsSection";
 
 export default function App() {
   return (
@@ -13,6 +14,9 @@ export default function App() {
 
         {/* Weather Overview Cards */}
         <WeatherOverview />
+
+        {/* ML Predictions Section */}
+        <MLPredictionsSection />
 
         {/* Statistics Section */}
         <StatsSection />
