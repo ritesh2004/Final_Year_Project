@@ -7,6 +7,7 @@ import { sensorDataTable } from './db/schema';
 import { storeSensorData } from './utils/store-data';
 import { SocketServer } from './socket/socketServer';
 import { createServer } from 'http';
+import { fetchSensorData } from './controllers/sensor.controllers';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(express.json());
 app.get('/health', (req, res) => {
     res.status(200).send('Server is healthy');
 });
+app.get('/api/v1/fetch-data', fetchSensorData)
 
 // Create HTTP server
 const httpServer = createServer(app);
