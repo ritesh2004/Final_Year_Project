@@ -35,6 +35,9 @@ export function useMLPredictions() {
         fetch('https://weather-ml-api-1.onrender.com/predict_temperature'),
         fetch('https://weather-ml-api-1.onrender.com/predict_rainfall')
       ]);
+      // const tempData = { "location": "Kolkata", "prediction": { "temp_max": 31.12, "temp_median": 28.63, "temp_min": 27.03 }, "prediction_date": "10-07-2026", "unit": "Celsius" }
+
+      // const rainData = { "location": "Kolkata", "prediction": { "rain_probability": 75.36, "weather_class": "Rain Likely" }, "prediction_date": "10-07-2026", "unit": "Percent" }
 
       if (!tempRes.ok || !rainRes.ok) {
         throw new Error('Failed to fetch predictions');
@@ -46,7 +49,7 @@ export function useMLPredictions() {
       setState({
         temperature: tempData.prediction,
         rainfall: rainData.prediction,
-        predictionDate: tempData.prediction_date, 
+        predictionDate: tempData.prediction_date,
         isLoading: false,
         error: null,
       });

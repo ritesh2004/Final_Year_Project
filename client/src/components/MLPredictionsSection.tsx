@@ -19,10 +19,10 @@ export function MLPredictionsSection() {
               Date: {predictionDate}
             </span>
           )}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={refetch} 
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refetch}
             disabled={isLoading}
             className="gap-2 bg-white/50 backdrop-blur-sm border-blue-200 hover:bg-blue-50 text-blue-700"
           >
@@ -48,46 +48,68 @@ export function MLPredictionsSection() {
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Thermometer className="size-32 rotate-12 transform" />
               </div>
-              
+
               <CardHeader className="p-0 mb-6">
                 <CardTitle className="text-white/90 text-sm font-medium tracking-wide uppercase flex items-center gap-2">
                   <Thermometer className="size-4" />
                   Temperature Forecast
                 </CardTitle>
               </CardHeader>
-              
+
               <CardContent className="p-0">
                 {isLoading || !temperature ? (
                   <div className="animate-pulse space-y-4">
-                    <div className="h-12 bg-white/20 rounded w-1/2"></div>
-                    <div className="h-4 bg-white/20 rounded w-3/4"></div>
+                    <div className="h-16 bg-white/20 rounded-xl w-1/2"></div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="h-20 bg-white/20 rounded-xl"></div>
+                      <div className="h-20 bg-white/20 rounded-xl"></div>
+                    </div>
                   </div>
                 ) : (
-                  <div className="space-y-6 relative z-10">
-                    <div className="flex justify-between items-end border-b border-white/20 pb-4">
-                      <div>
-                        <div className="text-white/80 text-sm mb-1 flex items-center gap-1"><Activity className="size-3"/> Median Expected</div>
-                        <div className="text-4xl font-bold flex items-baseline gap-1">
-                          {temperature.temp_median}
-                          <span className="text-xl text-white/80 font-normal">°C</span>
-                        </div>
+                  <div className="flex flex-col justify-between h-full">
+
+                    <div className='ml-6 p-4'>
+                      <p className="text-white/80 text-sm">
+                        Expected Temperature
+                      </p>
+
+                      <div className="flex items-end mt-2">
+                        <span className="text-6xl font-bold leading-none">
+                          {temperature.temp_median}°C
+                        </span>
+
+                        {/* <span className="text-2xl ml-1 mb-1">
+                          °C
+                        </span> */}
                       </div>
                     </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-black/10 rounded-lg p-3 backdrop-blur-sm border border-white/10">
-                        <div className="text-white/80 text-xs mb-1 flex items-center gap-1"><ArrowDown className="size-3 text-blue-200"/> Minimum</div>
-                        <div className="text-xl font-semibold flex items-baseline gap-1">
-                          {temperature.temp_min}<span className="text-sm font-normal opacity-80">°C</span>
+
+                    <div className="grid grid-cols-2 gap-4 mt-8">
+
+                      <div className="rounded-2xl bg-white/15 backdrop-blur-sm p-4 border border-white/20">
+                        <div className="flex items-center gap-2 text-sm text-white/70">
+                          <ArrowDown className="w-4 h-4" />
+                          Minimum
+                        </div>
+
+                        <div className="text-2xl font-semibold mt-2">
+                          {temperature.temp_min}°C
                         </div>
                       </div>
-                      <div className="bg-black/10 rounded-lg p-3 backdrop-blur-sm border border-white/10">
-                        <div className="text-white/80 text-xs mb-1 flex items-center gap-1"><ArrowUp className="size-3 text-orange-200"/> Maximum</div>
-                        <div className="text-xl font-semibold flex items-baseline gap-1">
-                          {temperature.temp_max}<span className="text-sm font-normal opacity-80">°C</span>
+
+                      <div className="rounded-2xl bg-white/15 backdrop-blur-sm p-4 border border-white/20">
+                        <div className="flex items-center gap-2 text-sm text-white/70">
+                          <ArrowUp className="w-4 h-4" />
+                          Maximum
+                        </div>
+
+                        <div className="text-2xl font-semibold mt-2">
+                          {temperature.temp_max}°C
                         </div>
                       </div>
+
                     </div>
+
                   </div>
                 )}
               </CardContent>
@@ -100,49 +122,75 @@ export function MLPredictionsSection() {
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Droplets className="size-32 -rotate-12 transform" />
               </div>
-              
-              <CardHeader className="p-0 mb-6">
+
+              <CardHeader className="mb-6">
                 <CardTitle className="text-white/90 text-sm font-medium tracking-wide uppercase flex items-center gap-2">
                   <Droplets className="size-4" />
                   Rainfall Probability
                 </CardTitle>
               </CardHeader>
 
-              <CardContent className="p-0 flex items-center justify-between h-[calc(100%-3rem)]">
+              <CardContent className="p-0">
                 {isLoading || !rainfall ? (
-                   <div className="animate-pulse flex items-center justify-between w-full">
-                     <div className="size-28 rounded-full border-4 border-white/20"></div>
-                     <div className="h-8 bg-white/20 rounded w-1/3"></div>
-                   </div>
+                  <div className="animate-pulse flex justify-center py-8">
+                    <div className="w-32 h-32 rounded-full border-4 border-white/20"></div>
+                  </div>
                 ) : (
-                  <>
-                    <div className="relative flex items-center justify-center size-32 z-10">
-                      <svg className="absolute inset-0 w-full h-full transform -rotate-90">
-                        <circle cx="64" cy="64" r="56" fill="transparent" stroke="currentColor" strokeWidth="8" className="text-white/20" />
-                        <circle 
-                          cx="64" 
-                          cy="64" 
-                          r="56" 
-                          fill="transparent" 
-                          stroke="currentColor" 
-                          strokeWidth="8" 
-                          strokeDasharray={`${2 * Math.PI * 56}`} 
-                          strokeDashoffset={`${2 * Math.PI * 56 * (1 - rainfall.rain_probability / 100)}`} 
-                          className="text-white drop-shadow-md transition-all duration-1000 ease-out" 
+                  <div className="flex flex-col items-center justify-center">
+
+                    <div className="relative w-36 h-36">
+
+                      <svg
+                        className="absolute inset-0 -rotate-90"
+                        width="144"
+                        height="144"
+                      >
+                        <circle
+                          cx="72"
+                          cy="72"
+                          r="60"
+                          fill="none"
+                          stroke="rgba(255,255,255,0.2)"
+                          strokeWidth="10"
+                        />
+
+                        <circle
+                          cx="72"
+                          cy="72"
+                          r="60"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="10"
+                          strokeLinecap="round"
+                          strokeDasharray={377}
+                          strokeDashoffset={
+                            377 - (377 * rainfall.rain_probability) / 100
+                          }
+                          className="transition-all duration-1000"
                         />
                       </svg>
-                      <div className="flex flex-col items-center justify-center">
-                        <span className="text-3xl font-bold tracking-tighter">{Math.round(rainfall.rain_probability)}%</span>
+
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-4xl font-bold">
+                          {rainfall.rain_probability}%
+                        </span>
                       </div>
+
                     </div>
-                    
-                    <div className="flex flex-col items-end z-10">
-                      <div className="text-white/80 text-sm mb-2 text-right">Weather Status</div>
-                      <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-2 rounded-full font-medium shadow-sm">
+
+                    <div className="mt-6 text-center">
+
+                      <div className="text-white/70 text-sm">
+                        Weather Status
+                      </div>
+
+                      <div className="mt-2 inline-flex rounded-full bg-white/20 px-5 py-5 font-semibold">
                         {rainfall.weather_class}
                       </div>
+
                     </div>
-                  </>
+
+                  </div>
                 )}
               </CardContent>
             </div>
