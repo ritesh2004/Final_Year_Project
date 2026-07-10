@@ -1,6 +1,6 @@
 import { useMLPredictions } from '../hooks/useMLPredictions';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Brain, Thermometer, Droplets, RefreshCw, AlertCircle, ArrowUp, ArrowDown, Activity } from 'lucide-react';
+import { Brain, Thermometer, Droplets, RefreshCw, AlertCircle, ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from './ui/button';
 
 export function MLPredictionsSection() {
