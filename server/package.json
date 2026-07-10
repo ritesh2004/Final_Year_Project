@@ -8,7 +8,7 @@
   "scripts": {
     "test": "tsx watch --env-file=.env --clear-screen=false test/tester.ts",
     "build": "rm -rf dist && tsc",
-    "start": "node --env-file=.env dist/server.js",
+    "start": "node dist/server.js",
     "dev": "tsx watch --env-file=.env --clear-screen=false src/server.ts"
   },
   "devDependencies": {
