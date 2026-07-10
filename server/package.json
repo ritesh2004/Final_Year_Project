@@ -9,7 +9,7 @@
     "test": "tsx watch --env-file=.env --clear-screen=false test/tester.ts",
     "build": "rm -rf dist && tsc",
     "start": "node dist/server.js",
-    "dev": "tsx watch --env-file=.env --clear-screen=false src/server.ts"
+    "dev": "tsx watch --clear-screen=false src/server.ts"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",

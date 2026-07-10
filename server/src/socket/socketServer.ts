@@ -1,9 +1,12 @@
-import {Server} from "socket.io";
+import { Server } from "socket.io";
 import { Server as HttpServer } from "http";
 import { sensorDataTable } from "../db/schema";
 import db from "../db/index";
 import { Socket } from "socket.io";
 import { desc } from "drizzle-orm";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export class SocketServer {
     private io: Server;
@@ -29,7 +32,7 @@ export class SocketServer {
 
     private async fetchSensorData(socket: Socket, data: { limit: number }) {
         // Simulate fetching data from sensors
-        
+
         const sensorData = await db.select().from(sensorDataTable).orderBy(desc(sensorDataTable.timestamp)).limit(data.limit);
         socket.emit("sensorData", sensorData);
     }

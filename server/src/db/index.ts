@@ -1,8 +1,11 @@
 import 'dotenv/config';
 import { drizzle } from "drizzle-orm/mysql2";
 import { createPool } from 'mysql2/promise';
+import dotenv from "dotenv";
 
-const pool : any = createPool({
+dotenv.config();
+
+const pool: any = createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,

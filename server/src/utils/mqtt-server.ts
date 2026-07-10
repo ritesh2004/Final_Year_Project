@@ -1,4 +1,7 @@
 import mqtt from "mqtt";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 interface MqttOptions {
     host: string;
@@ -15,6 +18,8 @@ const options: MqttOptions = {
     username: process.env.MQTT_USERNAME,
     password: process.env.MQTT_PASSWORD
 }
+
+console.log(options)
 
 // initialize the MQTT client
 const client = mqtt.connect(options);
